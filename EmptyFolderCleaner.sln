@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmptyFolderCleaner", "EmptyFolderCleaner\EmptyFolderCleaner.csproj", "{9132D7E1-E6FD-4197-BAC6-18A2AEE73700}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmptyFolderCleaner", "EmptyFolderCleaner\EmptyFolderCleaner.csproj", "{9132D7E1-E6FD-4197-BAC6-18A2AEE73700}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmptyFolderCleaner.Tests", "EmptyFolderCleaner.Tests\EmptyFolderCleaner.Tests.csproj", "{1385C542-B358-430A-AC1E-5A0AF1CE8245}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9132D7E1-E6FD-4197-BAC6-18A2AEE73700}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9132D7E1-E6FD-4197-BAC6-18A2AEE73700}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9132D7E1-E6FD-4197-BAC6-18A2AEE73700}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1385C542-B358-430A-AC1E-5A0AF1CE8245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1385C542-B358-430A-AC1E-5A0AF1CE8245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1385C542-B358-430A-AC1E-5A0AF1CE8245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1385C542-B358-430A-AC1E-5A0AF1CE8245}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
