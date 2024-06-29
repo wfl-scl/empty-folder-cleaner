@@ -1,11 +1,12 @@
 ﻿
-if (args.Length <= 0) {
+if (args.Length <= 0 || args.All(arg => arg.StartsWith('-'))) {
 	var executableName = AppDomain.CurrentDomain.FriendlyName;
-	Console.WriteLine($"Usage: {executableName} <Path>");
+	Console.WriteLine($"Usage: {executableName} <Path> [-y]");
 	return;
 }
 
-var path = args[0];
+var path = args.First(arg => !arg.StartsWith('-'));
+var forceDelete = args.Any(arg => arg == "-y");
 
 const string searchPattern = "*";
 const SearchOption searchOption = SearchOption.AllDirectories;
@@ -33,16 +34,22 @@ Console.WriteLine(
 	$"Empty folders:{newLine}{newLine}{string.Join(newLine, folders)}{newLine}"
 );
 
-ConsoleKey key;
-do {
-	Console.Write("Are you sure you want to delete folders? [y/n] ");
-	key = Console.ReadKey(intercept: false).Key;
-	if (key != ConsoleKey.Enter) {
-		Console.WriteLine();
-	}
-} while (key is not (ConsoleKey.Y or ConsoleKey.N));
+bool delete;
+if (forceDelete) {
+	delete = true;
+} else {
+	ConsoleKey key;
+	do {
+		Console.Write("Are you sure you want to delete folders? [y/n] ");
+		key = Console.ReadKey(intercept: false).Key;
+		if (key != ConsoleKey.Enter) {
+			Console.WriteLine();
+		}
+	} while (key is not (ConsoleKey.Y or ConsoleKey.N));
+	delete = key == ConsoleKey.Y;
+}
 
-if (key == ConsoleKey.Y) {
+if (delete) {
 	foreach (var folder in folders) {
 		Directory.Delete(folder, recursive: true);
 		Console.WriteLine($"Deleted: {folder}");
