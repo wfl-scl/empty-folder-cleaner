@@ -1,32 +1,54 @@
-﻿
+﻿using System.IO.Enumeration;
+
 if (args.Length <= 0 || args.All(arg => arg.StartsWith('-'))) {
 	var executableName = AppDomain.CurrentDomain.FriendlyName;
 	Console.WriteLine($"Usage: {executableName} <Path> [-y]");
 	return;
 }
 
-var path = args.First(arg => !arg.StartsWith('-'));
+var root = args.First(arg => !arg.StartsWith('-'));
 var forceDelete = args.Any(arg => arg == "-y");
 
-const string searchPattern = "*";
-const SearchOption searchOption = SearchOption.AllDirectories;
+// 指定フォルダ以下のファイル、フォルダを列挙する
+FileSystemEnumerable<(string Path, bool IsDirectory)> fileSystemEnumerable = new(
+	directory: root,
+	transform: (ref FileSystemEntry entry) => (entry.ToSpecifiedFullPath(), entry.IsDirectory),
+	options: new() {
+		RecurseSubdirectories = true
+	}
+);
+var entries = fileSystemEnumerable.ToHashSet();
 
-// ファイルが1つもないフォルダ (空フォルダ) を列挙する
-var folders = Directory.EnumerateDirectories(path, searchPattern, searchOption)
-	.Where(path => !Directory.EnumerateFiles(path, searchPattern, searchOption).Any())
-	.ToHashSet();
+foreach (var (path, isDirectory) in entries) {
+	if (!isDirectory) {
+		// ファイルは消さない
+		entries.Remove((path, isDirectory));
+		continue;
+	}
 
-if (folders.Count <= 0) {
-	Console.WriteLine("No empty folders found.");
-	return;
+	var childPrefix = $"{path}{Path.DirectorySeparatorChar}";
+
+	// path以下にあるファイル、フォルダかどうか
+	bool isChild((string Path, bool IsDirectory) entry) =>
+		path != entry.Path &&
+		entry.Path.StartsWith(childPrefix, StringComparison.Ordinal);
+
+	// このフォルダ内のファイルとフォルダ
+	var containsFile = entries.Where(isChild).Any(entry => !entry.IsDirectory);
+	if (containsFile) {
+		// ファイルが含まれるフォルダは消さない
+		entries.Remove((path, isDirectory));
+	} else {
+		// 空フォルダ内のフォルダは除外する
+		entries.RemoveWhere(isChild);
+	}
 }
 
-// 空フォルダ内のフォルダは無視する
-foreach (var folder in folders) {
-	folders.RemoveWhere(path =>
-		path != folder &&
-		path.StartsWith($"{folder}{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
-	);
+var folders = entries.Select(entry => entry.Path).ToArray();
+
+if (folders.Length <= 0) {
+	Console.WriteLine("No empty folders found.");
+	return;
 }
 
 var newLine = Environment.NewLine;
