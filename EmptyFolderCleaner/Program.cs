@@ -24,7 +24,7 @@ if (folders.Count <= 0) {
 foreach (var folder in folders) {
 	folders.RemoveWhere(path =>
 		path != folder &&
-		path.StartsWith($"{folder}{Path.DirectorySeparatorChar}")
+		path.StartsWith($"{folder}{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
 	);
 }
 
